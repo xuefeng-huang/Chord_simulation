@@ -7,14 +7,23 @@
 
 #ifndef NODE_H
 #define	NODE_H
+#include <vector>
+#include <string>
+using namespace std;
 
 class Node {
 public:
-    Node(int);
+    Node(unsigned int, unsigned int);
+    unsigned int getId() const;
+    void setId(unsigned int);
+    Node** getFingerTable();
+    vector<string>& getItem();
    
-    virtual ~Node();
+    ~Node();
 private:
-    int* fingerTable;
+    Node** fingerTable;
+    unsigned int id;
+    vector<string> data_items; 
 };
 
 #endif	/* NODE_H */
