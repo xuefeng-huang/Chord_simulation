@@ -1,6 +1,6 @@
 /* 
  * File:   Node.cpp
- * Author: tim
+ * Author: Huang xuefeng
  * 
  * Created on August 4, 2014, 4:58 PM
  */
@@ -30,7 +30,7 @@ Node** Node::getFingerTable(){
     return fingerTable;
 }
 
-vector<string>& Node::getItem(){
+vector<item>& Node::getItem(){
     return data_items;
 }
 
