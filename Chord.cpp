@@ -82,20 +82,12 @@ Node* Chord::getSuccessor(unsigned int id){
     return *(ring.begin());
 }
 
-//return pointer of next successor not include self
-Node* Chord::getSuccessor_exclude_self(unsigned int id){
-    for(set<Node*>::iterator it = ring.begin(); it != ring.end(); it++){
-        if((*it)->getId() > id)
-            return (*it);
-    }
-    //no bigger id found, return pointer of first node
-    return *(ring.begin());
-}
+
 
 //shift data item from successor to newly added node
 void Chord::shiftDataItem(Node* node){
-    Node* successor = getSuccessor(node->getId());
-    vector<item> successor_item = successor->getItem();
+    Node* successor = node->getFingerTable()[0];
+    vector<item>& successor_item = successor->getItem();
     unsigned int successor_id = successor->getId();
     
     vector<item>::iterator it = successor_item.begin();
@@ -119,10 +111,10 @@ void Chord::removePeer(unsigned int id){
         cout << "peer " << id << " removed. This is last peer, chord is now empty\n"; 
     }
     else{
-        Node* successor = getSuccessor(id);
+        Node* successor = getSuccessor(id)->getFingerTable()[0];
         while(it != ring.end()){
             if((*it)->getId() == id){
-                vector<item> data = (*it)->getItem();
+                vector<item>& data = (*it)->getItem();
                 for(vector<item>::iterator itr = data.begin(); itr != data.end(); itr++){
                     successor->getItem().push_back((*itr));//push all item to successor
                 }
@@ -161,7 +153,8 @@ Node* Chord::find(unsigned int id, unsigned int position){
                 return (*it);
             }
             cout << id << " > ";
-            final_node = find_helper((*it), position);
+            unsigned int searching_node_successor = getSuccessor(position)->getId();//successor id of searching node
+            final_node = find_helper((*it), position, searching_node_successor);
             break;
         }
     }
@@ -171,12 +164,11 @@ Node* Chord::find(unsigned int id, unsigned int position){
 }
 
 //return the peer node responsible for the searching position
-Node* Chord::find_helper(Node* start_node, unsigned int position){
+Node* Chord::find_helper(Node* start_node, unsigned int position, unsigned int successor_id){
     Node** table = start_node->getFingerTable();
-    Node* successor = getSuccessor_exclude_self(start_node->getId());
-    Node* searching_node_successor = getSuccessor(position);
-   
-    if(successor->getId() == searching_node_successor->getId()){//between this peer and successor
+    Node* successor = table[0];//first node in finger table is the successor
+    
+    if(successor->getId() == successor_id){//between this peer and successor
         cout << successor->getId() << endl;
         return successor;
     }
@@ -198,14 +190,14 @@ Node* Chord::find_helper(Node* start_node, unsigned int position){
     }
     cout << nearest_node->getId() << " > ";
     //call helper recursively to find the peer
-    find_helper(nearest_node, position);
+    find_helper(nearest_node, position, successor_id);
     
 }
 
 void Chord::Delete(unsigned int id, string data){
     unsigned int position = hash(data);
     Node* final_position = find(id, position);
-    vector<item> items = final_position->getItem();
+    vector<item>& items = final_position->getItem();
     
     for(vector<item>::iterator it = items.begin(); it != items.end(); it++){
         if((*it).value == data){
@@ -219,7 +211,7 @@ void Chord::Delete(unsigned int id, string data){
 void Chord::print(unsigned int position){
     Node* final_node = find(0, position);//start searching from node 0
     unsigned int id = final_node->getId();
-    vector<item> items = final_node->getItem();
+    vector<item>& items = final_node->getItem();
     Node** table = final_node->getFingerTable();
     
     cout << "data at index node: " << id << " :\n";

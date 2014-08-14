@@ -35,10 +35,9 @@ private:
     unsigned int hash(string);
     void buildFingerTable(unsigned int);
     Node* getSuccessor(unsigned int);
-    Node* getSuccessor_exclude_self(unsigned int);
     void shiftDataItem(Node*);
     Node* find(unsigned int, unsigned int);
-    Node* find_helper(Node*, unsigned int);
+    Node* find_helper(Node*, unsigned int, unsigned int);
 
 };
 
