@@ -29,13 +29,13 @@ public:
     void print(unsigned int);
     ~Chord();
 private:
-    unsigned int size;
-    unsigned int tableSize;
+    unsigned int size;//chord size
+    unsigned int tableSize;//finger table size
     set<Node*, nodeCompare> ring;
     unsigned int hash(string);
-    void buildFingerTable(unsigned int);
+    void buildFingerTable();
     Node* getSuccessor(unsigned int);
-    void shiftDataItem(Node*);
+    void shiftDataItem(Node*, Node*);
     Node* find(unsigned int, unsigned int);
     Node* find_helper(Node*, unsigned int, unsigned int);
 
